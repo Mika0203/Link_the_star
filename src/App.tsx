@@ -1,4 +1,4 @@
-import LinkTheStars from "./LinkTheStars";
+import LinkTheStar from "./LinkTheStar";
 
 const sampleData : Array<Array<number>> = [
   [4,1,0,0,1],
@@ -11,7 +11,7 @@ const sampleData : Array<Array<number>> = [
 function App() {
   return (
     <div className="App">
-      <LinkTheStars plateData={sampleData} />
+      <LinkTheStar plateData={sampleData} />
     </div>
   );
 }
