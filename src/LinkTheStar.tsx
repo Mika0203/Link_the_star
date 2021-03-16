@@ -89,9 +89,10 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
             nodeList.forEach(row => {
                 row.forEach(node => {
                     if (node.starNumber === 0) return;
+
                     context.beginPath();
                     const center = getCenter(node.coordinates.x, node.coordinates.y);
-                    context.fillText(node.starNumber?.toString(), center.x, center.y);
+                    context.fillText(node.isLinked ? "OK!" : node.starNumber?.toString(), center.x, center.y);
                     context.stroke();
                 })
             })
