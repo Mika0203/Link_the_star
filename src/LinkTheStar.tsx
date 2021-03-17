@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Node from './Node';
-import { DrawStar } from './draw';
+import drawTool from './draw';
 
+const colors = [
+    'red',
+    'blue',
+    'white',
+    'yellow',
+    'purple'
+]
 interface LinkTheStarsProps {
     plateData: Array<Array<number>>
 }
@@ -41,32 +48,6 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
 
     const [selectedNode, setSelectedNode] = useState<Node>();
 
-    const drawLine = useCallback(() => {
-        const context = canvas.current?.getContext('2d');
-        if (context) {
-            context.beginPath();
-            context.fillStyle = 'black';
-            context.fillRect(0,0,width,height);
-            context.stroke();
-            
-            context.beginPath();
-            context.strokeStyle = 'white';
-            context.fillStyle = 'white';
-            for (let i = 1; i <= matrix.y; i++) {
-                context.moveTo(0, i * lineInterval.y);
-                context.lineTo(width, i * lineInterval.y);
-            }
-
-            for (let i = 1; i <= matrix.x; i++) {
-                context.moveTo(i * lineInterval.x, 0);
-                context.lineTo(i * lineInterval.x, height);
-            }
-
-            context.rect(0, 0, width, height);
-            context.stroke();
-        }
-    }, [canvas, lineInterval, matrix]);
-
     const getCenter = useCallback((x: number, y: number) => {
         const ret : Coordinates = {
             x: x * lineInterval.x + lineInterval.x / 2,
@@ -93,9 +74,11 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
 
     const renderStars = () => {
         const context = canvas.current?.getContext('2d');
+
         if (context) {
             context.clearRect(0,0,width,height);
-            drawLine();
+            context && drawTool.DrawPlate(context, width, height, matrix, lineInterval);
+
             nodeList.forEach(row => {
                 row.forEach(node => {
                     if (node.starNumber === 0) return;
@@ -103,12 +86,9 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
                     context.beginPath();
                     const center : Coordinates = getCenter(node.coordinates.x, node.coordinates.y);
 
-                    if(node.isRootNode){
-                        DrawStar(context, center);
-                    } else {
-                        context.fillText(node.isLinked ? "OK!" : node.starNumber?.toString(), center.x, center.y);
-                    }
-
+                    node.isRootNode 
+                        ? drawTool.DrawStar(context, center, colors[node.starNumber], node.isLinked)
+                        : context.fillText(node.isLinked ? "OK!" : node.starNumber?.toString(), center.x, center.y);
                     context.stroke();
                 })
             })
@@ -163,8 +143,6 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
     }, [InitNodes]);
 
     useEffect(() => {
-        console.log(currentMouseNode?.isLinked);
-        
         if(selectedNode != currentMouseNode && currentMouseNode && isMouseDown && selectedNode){
 
             // 되돌아가는거 처리해야함.
@@ -173,7 +151,7 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
             renderStars();
             console.log(selectedNode, currentMouseNode);
         }
-    },[currentMouseNode]);
+    },[currentMouseNode, nodeList]);
 
 
     const onMouseDown = () => {
@@ -192,8 +170,6 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
             y: event.clientY
         });
     }
-
-
 
     return <canvas
         onMouseUp={onMouseUp}
