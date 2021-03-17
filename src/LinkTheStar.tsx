@@ -88,7 +88,7 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
 
                     node.isRootNode 
                         ? drawTool.DrawStar(context, center, colors[node.starNumber], node.isLinked)
-                        : context.fillText(node.isLinked ? "OK!" : node.starNumber?.toString(), center.x, center.y);
+                        : drawTool.DrawLink(context, center, node.linkDirection, lineInterval, node.isLinked)
                     context.stroke();
                 })
             })
@@ -143,7 +143,7 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
     }, [InitNodes]);
 
     useEffect(() => {
-        if(selectedNode != currentMouseNode && currentMouseNode && isMouseDown && selectedNode){
+        if(selectedNode !== currentMouseNode && currentMouseNode && isMouseDown && selectedNode){
 
             // 되돌아가는거 처리해야함.
             const nextNode:Node = selectedNode?.setChild(currentMouseNode);
