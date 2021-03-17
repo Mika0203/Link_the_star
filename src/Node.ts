@@ -1,4 +1,3 @@
-import { notDeepStrictEqual } from "node:assert";
 import { Coordinates } from "./LinkTheStar";
 
 interface NodeProps {

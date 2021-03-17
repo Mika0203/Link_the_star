@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Node from './Node';
+import { DrawStar } from './draw';
 
 interface LinkTheStarsProps {
     plateData: Array<Array<number>>
@@ -43,6 +44,14 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
     const drawLine = useCallback(() => {
         const context = canvas.current?.getContext('2d');
         if (context) {
+            context.beginPath();
+            context.fillStyle = 'black';
+            context.fillRect(0,0,width,height);
+            context.stroke();
+            
+            context.beginPath();
+            context.strokeStyle = 'white';
+            context.fillStyle = 'white';
             for (let i = 1; i <= matrix.y; i++) {
                 context.moveTo(0, i * lineInterval.y);
                 context.lineTo(width, i * lineInterval.y);
@@ -59,10 +68,11 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
     }, [canvas, lineInterval, matrix]);
 
     const getCenter = useCallback((x: number, y: number) => {
-        return {
+        const ret : Coordinates = {
             x: x * lineInterval.x + lineInterval.x / 2,
             y: y * lineInterval.y + lineInterval.y / 2
         }
+        return ret
     }, [lineInterval]);
 
     const InitNodes = useCallback(() => {
@@ -91,8 +101,14 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
                     if (node.starNumber === 0) return;
 
                     context.beginPath();
-                    const center = getCenter(node.coordinates.x, node.coordinates.y);
-                    context.fillText(node.isLinked ? "OK!" : node.starNumber?.toString(), center.x, center.y);
+                    const center : Coordinates = getCenter(node.coordinates.x, node.coordinates.y);
+
+                    if(node.isRootNode){
+                        DrawStar(context, center);
+                    } else {
+                        context.fillText(node.isLinked ? "OK!" : node.starNumber?.toString(), center.x, center.y);
+                    }
+
                     context.stroke();
                 })
             })
@@ -187,4 +203,3 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
         width={width}
         height={height} />
 };
-
