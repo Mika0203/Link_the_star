@@ -51,8 +51,10 @@ const drawTool = {
             context.quadraticCurveTo(reddotPos.x, reddotPos.y, dot[1].x, dot[1].y);
         })
 
+        isFill 
+        ? context.fill() 
+        : context.stroke();
 
-        context.stroke() 
         context.restore();
 
     },
@@ -149,7 +151,6 @@ const drawTool = {
 
         context.stroke();
         context.restore();
-        // context.fillText(isFill ? "OK!" : linkDir.x, centerPos.x, centerPos.y);
     }
 }
 

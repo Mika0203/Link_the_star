@@ -1,4 +1,3 @@
-import { Dir } from "fs";
 import { Coordinates } from "./LinkTheStar";
 
 interface NodeProps {
@@ -129,7 +128,7 @@ export default class Node {
                 const y = this.childNode.coordinates.y - this.parentNode.coordinates.y;
 
                 if (Math.abs(x) === 2) {
-                    this.linkDirection = { x: 2, y: 0 };
+                    this.linkDirection = { x: 2, y: 0 };    
                 } else if (Math.abs(y) === 2) {
                     this.linkDirection = { x: 0, y: 2 };
                 } else {

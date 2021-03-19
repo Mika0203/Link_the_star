@@ -57,7 +57,7 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
     }, [lineInterval]);
 
 
-    const renderStars = () => {
+    const renderNodes = useCallback(() => {
         const context = canvas.current?.getContext('2d');
 
         if (context) {
@@ -76,11 +76,11 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
                 })
             })
         }
-    }
+    },[getCenter, lineInterval, matrix, nodeList]);
 
     useEffect(() => {
-        renderStars();
-    }, [nodeList, getCenter]);
+        renderNodes();
+    }, [renderNodes]);
 
     useEffect(() => {
         const onMouseMove = (event: MouseEvent) => {
@@ -90,10 +90,10 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
             });
         };
 
-        canvas.current?.addEventListener('mousemove', onMouseMove);
-
+        const cc = canvas.current;
+        cc?.addEventListener('mousemove', onMouseMove);
         return () => {
-            canvas.current?.removeEventListener('mousemove', onMouseMove);
+            cc?.removeEventListener('mousemove', onMouseMove);
         }
     }, []);
 
@@ -148,10 +148,10 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
             // 되돌아가는거 처리해야함.
             const nextNode:Node = selectedNode?.setChild(currentMouseNode);
             setSelectedNode(nextNode);
-            renderStars();
+            renderNodes();
             console.log(selectedNode, currentMouseNode);
         }
-    },[currentMouseNode, nodeList]);
+    },[currentMouseNode, nodeList, isMouseDown, renderNodes, selectedNode]);
 
 
     const onMouseDown = () => {
