@@ -15,8 +15,11 @@ const drawTool = {
 
         let currentPosition: Coordinates = startPosition;
 
+        context.save();
         context.beginPath();
-        context.lineWidth = 2;
+
+        context.lineWidth = 3;
+        context.fillStyle = color;
         context.strokeStyle = color;
 
         const vertexes: Array<Array<Coordinates>> = [];
@@ -28,8 +31,9 @@ const drawTool = {
         }
 
         context.moveTo(vertexes[0][0].x, vertexes[0][0].y);
-
+        
         vertexes.forEach(dot => {
+
             const centerOfVertex = getCenter(dot[0], dot[1]);
 
             const slope: number = getSlope(centerOfVertex, centerPos);
@@ -46,10 +50,11 @@ const drawTool = {
             }
             context.quadraticCurveTo(reddotPos.x, reddotPos.y, dot[1].x, dot[1].y);
         })
-        if (isFill)
-            context.fill();
-        else
-            context.stroke();
+
+
+        context.stroke() 
+        context.restore();
+
     },
 
     DrawPlate: (context: CanvasRenderingContext2D,
@@ -58,13 +63,16 @@ const drawTool = {
         matrix: Coordinates,
         lineInterval: Coordinates
     ) => {
-        if (context) {
+        if (context) {  
             context.beginPath();
+            context.save();
             context.fillStyle = 'black';
             context.fillRect(0, 0, width, height);
+            context.restore();
             context.stroke();
 
             context.beginPath();
+            context.save();
 
             context.strokeStyle = 'white';
             context.fillStyle = 'white';
@@ -80,21 +88,27 @@ const drawTool = {
 
             context.rect(0, 0, width, height);
             context.stroke();
-            context.closePath();
-
+            context.restore();
         }
     },
 
     DrawLink: (
         context: CanvasRenderingContext2D, 
         centerPos: Coordinates, 
+        color : string,
         linkDir : Coordinates,
         lineInterval: Coordinates,
         isFill: boolean,
         ) => {
+        context.save();
+
+        context.lineWidth = 5;
+        context.fillStyle = color;
+        context.strokeStyle = color;
+        context.lineCap = "round";
 
         context.beginPath();
-        
+            
         const drawRight = () => {
             context.moveTo(centerPos.x, centerPos.y);
             context.lineTo(centerPos.x + lineInterval.x * 0.5, centerPos.y);
@@ -132,9 +146,9 @@ const drawTool = {
         } else if(linkDir.y === -1){
             drawUp();
         }
-        console.log(linkDir)
-        context.stroke();
 
+        context.stroke();
+        context.restore();
         // context.fillText(isFill ? "OK!" : linkDir.x, centerPos.x, centerPos.y);
     }
 }

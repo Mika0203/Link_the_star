@@ -56,26 +56,12 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
         return ret
     }, [lineInterval]);
 
-    const InitNodes = useCallback(() => {
-        const nodes: Array<Array<Node>> = [];
-        data.plateData.forEach((row, y) => {
-            const nodeRow: Array<Node> = [];
-            row.forEach((col, x) => {
-                nodeRow.push(new Node({
-                    coordinate: { x, y },
-                    starNumber: col,
-                    isRootNode: col !== 0
-                }))
-            })
-            nodes.push(nodeRow);
-        })
-        setNodeList(nodes);
-    }, [data.plateData]);
 
     const renderStars = () => {
         const context = canvas.current?.getContext('2d');
 
         if (context) {
+            context.save();
             context.clearRect(0,0,width,height);
             context && drawTool.DrawPlate(context, width, height, matrix, lineInterval);
 
@@ -83,13 +69,10 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
                 row.forEach(node => {
                     if (node.starNumber === 0) return;
 
-                    context.beginPath();
                     const center : Coordinates = getCenter(node.coordinates.x, node.coordinates.y);
-
                     node.isRootNode 
                         ? drawTool.DrawStar(context, center, colors[node.starNumber], node.isLinked)
-                        : drawTool.DrawLink(context, center, node.linkDirection, lineInterval, node.isLinked)
-                    context.stroke();
+                        : drawTool.DrawLink(context, center, colors[node.starNumber], node.linkDirection, lineInterval, node.isLinked)
                 })
             })
         }
@@ -100,7 +83,6 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
     }, [nodeList, getCenter]);
 
     useEffect(() => {
-
         const onMouseMove = (event: MouseEvent) => {
             setMousePos({
                 x: event.clientX,
@@ -137,6 +119,24 @@ export default function LinkTheStars(data: LinkTheStarsProps) {
             y: height / data.plateData.length
         });
     }, [data.plateData, width, height]);
+
+            
+    const InitNodes = useCallback(() => {
+        const nodes: Array<Array<Node>> = [];
+        data.plateData.forEach((row, y) => {
+            const nodeRow: Array<Node> = [];
+            row.forEach((col, x) => {
+                nodeRow.push(new Node({
+                    coordinate: { x, y },
+                    starNumber: col,
+                    isRootNode: col !== 0
+                }))
+            })
+            nodes.push(nodeRow);
+        })
+        setNodeList(nodes);
+    }, [data.plateData]);
+    
 
     useEffect(() => {
         InitNodes();
